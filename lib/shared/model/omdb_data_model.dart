@@ -13,9 +13,9 @@ class OmdbDataModel {
 
   factory OmdbDataModel.fromMap(Map<dynamic, dynamic> map) {
     List<Rating> ratings = [];
+    if(map['Ratings'] != null){
     for (var rating in map['Ratings']) {
       final isIMDb = rating['Source'] == 'Internet Movie Database';
-      if(isIMDb) continue;
       ratings.add(
         Rating(
           source: isIMDb ? 'IMDb' : rating['Source'] ?? '',
@@ -23,6 +23,7 @@ class OmdbDataModel {
           isIMDb: isIMDb,
         ),
       );
+    }
     }
 
     return OmdbDataModel(
@@ -32,7 +33,7 @@ class OmdbDataModel {
       writer: map['Writer'] ?? '',
       actors: map['Actors'] ?? '',
       plot: map['Plot'] ?? '',
-      poster: map['Poster'] ?? '',
+      poster: map['Poster'] ?? 'N/A',
       awards: map['Awards'] ?? '',
       rating: ratings,
     );

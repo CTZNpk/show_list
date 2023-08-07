@@ -151,7 +151,7 @@ class _HorizontaListMovie extends ConsumerState<HorizontalListMovie>
                       ],
                     ),
                     SizedBox(
-                      height: size.height * 0.05,
+                      height: 30,
                       width: size.width * 0.30,
                       child: Center(
                         child: Text(

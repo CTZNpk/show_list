@@ -12,7 +12,7 @@ class MainLayout extends StatefulWidget {
   State<MainLayout> createState() => _MainLayoutState();
 }
 
-class _MainLayoutState extends State<MainLayout> with TickerProviderStateMixin {
+class _MainLayoutState extends State<MainLayout> with TickerProviderStateMixin{
   int selectedPosition = 0;
   late CircularBottomNavigationController tabBarController;
 
@@ -27,6 +27,7 @@ class _MainLayoutState extends State<MainLayout> with TickerProviderStateMixin {
     tabBarController = CircularBottomNavigationController(selectedPosition);
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +88,10 @@ class _BodyDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return bodyWidgets[selectedPosition];
+    return IndexedStack(
+        index: selectedPosition,
+        children: bodyWidgets,
+        );
   }
 }
 

@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:show_list/features/home_page/repository/home_screen_repository.dart';
 import 'package:show_list/shared/model/mal_anime_data_model.dart';
@@ -6,7 +5,7 @@ import 'package:show_list/shared/model/omdb_data_model.dart';
 import 'package:show_list/shared/model/trakt_data_model.dart';
 
 final homeScreenControllerProvider = Provider((ref) {
-  HomeScreenRepository homeScreenRepository = HomeScreenRepository();
+  HomeScreenRepository homeScreenRepository = ref.read(homeScreenRepositoryProvider);
   return HomeScreenController(homeScreenRepository: homeScreenRepository);
 });
 

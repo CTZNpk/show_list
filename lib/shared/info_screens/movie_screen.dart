@@ -220,4 +220,9 @@ class _MovieScreenState extends State<MovieScreen> {
       ),
     );
   }
+  @override
+    void dispose() {
+      _controller.dispose();
+      super.dispose();
+    }
 }

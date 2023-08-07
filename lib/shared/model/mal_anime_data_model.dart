@@ -1,5 +1,3 @@
-import 'package:show_list/shared/enums/show_type.dart';
-
 class MalAnimeDataModel {
   MalAnimeDataModel({
     required this.malId,
@@ -33,7 +31,6 @@ class MalAnimeDataModel {
       genresSub.add(gen['name']);
     }
     double? rating = map['mean'] == null? null: map['mean'] is double ? map['mean']: map['mean'].toDouble();
-    print(map);
 
     return MalAnimeDataModel(
       malId : map['id'].toString(),

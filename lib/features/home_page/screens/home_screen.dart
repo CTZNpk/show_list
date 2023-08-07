@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:show_list/features/home_page/controller/home_screen_controller.dart';
 import 'package:show_list/features/home_page/widgets/horizontal_list_anime.dart';
 import 'package:show_list/features/home_page/widgets/horizontal_list_movie.dart';
-import 'package:show_list/shared/model/mal_anime_data_model.dart';
-import 'package:show_list/shared/model/trakt_data_model.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -13,7 +11,9 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen>
+     {
+
   @override
   Widget build(BuildContext context) {
     final myTheme = Theme.of(context);
@@ -152,8 +152,8 @@ class _HomePageHeading extends StatelessWidget {
   }
 }
 
-class _ReturnAnimeOrMovieHorizontalList extends StatelessWidget {
-  _ReturnAnimeOrMovieHorizontalList({
+class _ReturnAnimeOrMovieHorizontalList extends StatefulWidget {
+  const _ReturnAnimeOrMovieHorizontalList({
     required this.isAnime,
     required this.dataFunction,
   });
@@ -161,11 +161,23 @@ class _ReturnAnimeOrMovieHorizontalList extends StatelessWidget {
   final Function dataFunction;
   final bool isAnime;
 
-  late var data = dataFunction();
+  @override
+  State<_ReturnAnimeOrMovieHorizontalList> createState() =>
+      _ReturnAnimeOrMovieHorizontalListState();
+}
+
+class _ReturnAnimeOrMovieHorizontalListState
+    extends State<_ReturnAnimeOrMovieHorizontalList>
+    with AutomaticKeepAliveClientMixin {
+  late var data = widget.dataFunction();
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
-    return isAnime
+    super.build(context);
+    return widget.isAnime
         ? HorizontalListAnime(
             data: data,
           )
