@@ -36,7 +36,8 @@ class AuthController {
     await authRepository.signingInUserWithGoogle(context: context);
   }
 
-  Future sendingEmailVerification({required BuildContext context})async{
-    await authRepository.sendingEmailVerification(context);
+
+  Future signOut() async {
+    await authRepository.signingOut();
   }
 }

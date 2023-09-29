@@ -1,11 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:show_list/features/home_page/repository/home_screen_repository.dart';
+import 'package:show_list/shared/enums/show_type.dart';
 import 'package:show_list/shared/model/mal_anime_data_model.dart';
-import 'package:show_list/shared/model/omdb_data_model.dart';
-import 'package:show_list/shared/model/trakt_data_model.dart';
+import 'package:show_list/shared/model/short_mal_data_model.dart';
+import 'package:show_list/shared/model/short_tmdb_datamodel.dart';
+import 'package:show_list/shared/model/tmdb_datamodel.dart';
 
 final homeScreenControllerProvider = Provider((ref) {
-  HomeScreenRepository homeScreenRepository = ref.read(homeScreenRepositoryProvider);
+  HomeScreenRepository homeScreenRepository =
+      ref.read(homeScreenRepositoryProvider);
   return HomeScreenController(homeScreenRepository: homeScreenRepository);
 });
 
@@ -16,55 +19,76 @@ class HomeScreenController {
 
   final HomeScreenRepository homeScreenRepository;
 
-  Future<List<TraktDataModel>?> getTrendingMovies() async {
-    return await homeScreenRepository.getTrendingMovies();
+  Future<List<ShortTMDBDataModel>?> getTrendingMovies(int pageNumber) async {
+    return await homeScreenRepository.getTrendingMovies(pageNumber);
   }
 
-  Future<List<TraktDataModel>?> getPopularMovies() async {
-    return await homeScreenRepository.getPopularMovies();
+  Future<List<ShortTMDBDataModel>?> getPopularMovies(int pageNumber) async {
+    return await homeScreenRepository.getPopularMovies(pageNumber);
   }
 
-  Future<List<TraktDataModel>?> getBoxOfficeMovies() async {
-    return await homeScreenRepository.getBoxOfficeMovies();
+  Future<List<ShortTMDBDataModel>?> getBoxOfficeMovies(int pageNumber) async {
+    return await homeScreenRepository.getNowPlayingMovies(pageNumber);
   }
 
-  Future<List<TraktDataModel>?> getMostWatchedMovies(
-      ) async {
-    return await homeScreenRepository.getMostWatchedMovies();
+  Future<List<ShortTMDBDataModel>?> getTopRatedMovies(
+    int pageNumber,
+  ) async {
+    return await homeScreenRepository.getTopRatedMovies(pageNumber);
   }
 
-  Future<List<TraktDataModel>?> getTrendingShows() async {
-    return await homeScreenRepository.getTrendingShows();
+  Future<List<ShortTMDBDataModel>?> getRecommendedMovies(
+    String movieID,
+    int pageNumber,
+  ) async {
+    return await homeScreenRepository.getRecommendedMovies(movieID, pageNumber);
   }
 
-  Future<List<TraktDataModel>?> getMostWatchedShows(
-      ) async {
-    return await homeScreenRepository.getMostWatchedShows();
+  Future<List<ShortTMDBDataModel>?> getTrendingShows(int pageNumber) async {
+    return await homeScreenRepository.getTrendingShows(pageNumber);
   }
 
-  Future<List<TraktDataModel>?> getPopularShows() async {
-    return await homeScreenRepository.getPopularShows();
+  Future<List<ShortTMDBDataModel>?> getTopRatedShows(int pageNumber) async {
+    return await homeScreenRepository.getTopRatedShows(pageNumber);
   }
 
-  Future<List<MalAnimeDataModel>> getHighestRankedAnime() async {
-    return await homeScreenRepository.getHighestRankedAnime();
+  Future<List<ShortTMDBDataModel>?> getPopularShows(int pageNumber) async {
+    return await homeScreenRepository.getPopularShows(pageNumber);
   }
 
-  Future<List<MalAnimeDataModel>> getPopularAnime() async {
-    return await homeScreenRepository.getPopularAnime();
+  Future<List<ShortTMDBDataModel>?> getRecommendedShows(
+    String showID,
+    int pageNumber,
+  ) async {
+    return await homeScreenRepository.getRecommendedShows(showID, pageNumber);
   }
 
-  Future<List<MalAnimeDataModel>> getTopAiringAnime() async {
-    return await homeScreenRepository.getTopAiringAnime();
+  Future<List<ShortMalData>> getHighestRankedAnime(int pageNumber) async {
+    return await homeScreenRepository.getHighestRankedAnime(pageNumber);
   }
 
-  Future<List<MalAnimeDataModel>> getUpcomingAnime() async {
-    return await homeScreenRepository.getUpcomingAnime();
+  Future<List<ShortMalData>> getPopularAnime(int pageNumber) async {
+    return await homeScreenRepository.getPopularAnime(pageNumber);
   }
 
-  Future<OmdbDataModel?> getOmdbData(
-      String imdbID) async {
-    return await homeScreenRepository.getOmdbData(imdbID);
+  Future<List<ShortMalData>> getTopAiringAnime(int pageNumber) async {
+    return await homeScreenRepository.getTopAiringAnime(pageNumber);
+  }
+
+  Future<List<ShortMalData>> getUpcomingAnime(int pageNumber) async {
+    return await homeScreenRepository.getUpcomingAnime(pageNumber);
+  }
+
+  Future<String?> getImdbID(String tmdbID, ShowType showType) async {
+    return await homeScreenRepository.getImdbID(tmdbID, showType);
+  }
+
+  Future<TMDBDataModel?> getTmdbData(String tmdbID, ShowType showType) async {
+    return await homeScreenRepository.getTmdbData(tmdbID, showType);
+  }
+
+  Future<MalAnimeDataModel?> getAnimeDataFromID(String malID) async {
+    return await homeScreenRepository.getAnimeDataFromID(malID);
   }
 
   Future<String?> getImdbRating(String imdbID) async {

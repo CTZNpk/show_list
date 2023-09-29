@@ -1,18 +1,28 @@
 import 'package:circular_bottom_navigation/circular_bottom_navigation.dart';
 import 'package:circular_bottom_navigation/tab_item.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:show_list/features/auth/controller/auth_controller.dart';
 import 'package:show_list/features/auth/screens/auth_screen.dart';
+import 'package:show_list/features/following_page/screens/following_screen.dart';
 import 'package:show_list/features/home_page/screens/home_screen.dart';
+import 'package:show_list/features/main_layout/controller/main_layout_controller.dart';
+import 'package:show_list/features/my_list/screens/list_screen.dart';
+import 'package:show_list/features/profile_page/controller/profile_controller.dart';
+import 'package:show_list/features/profile_page/screens/profile_screen.dart';
 import 'package:show_list/features/search_page/screens/search_screen.dart';
 
-class MainLayout extends StatefulWidget {
+class MainLayout extends ConsumerStatefulWidget {
+  static const routeName = '/main-layout';
   const MainLayout({super.key});
 
   @override
-  State<MainLayout> createState() => _MainLayoutState();
+  ConsumerState<MainLayout> createState() => _MainLayoutState();
 }
 
-class _MainLayoutState extends State<MainLayout> with TickerProviderStateMixin{
+class _MainLayoutState extends ConsumerState<MainLayout>
+    with TickerProviderStateMixin {
   int selectedPosition = 0;
   late CircularBottomNavigationController tabBarController;
 
@@ -22,16 +32,26 @@ class _MainLayoutState extends State<MainLayout> with TickerProviderStateMixin{
     });
   }
 
+  void signOut() async {
+    await ref.read(authControllerProvider).signOut();
+    setState(() {});
+  }
+
   @override
   void initState() {
     tabBarController = CircularBottomNavigationController(selectedPosition);
+    ref.read(mainLayoutControllerProvider).requestDataFromLocalSql();
+    ref
+        .read(profileControllerProvider)
+        .getProfileDataFromFirebase(FirebaseAuth.instance.currentUser!.uid);
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final myTheme = Theme.of(context);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(
@@ -40,17 +60,19 @@ class _MainLayoutState extends State<MainLayout> with TickerProviderStateMixin{
           onPressed: () {},
         ),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.search,
-            ), //TODO add search functionality / move to search screen
-          ),
-          IconButton(
-            onPressed: () {},
+          PopupMenuButton(
             icon: const Icon(
               Icons.more_vert,
-            ), //TODO add dashboard from the right
+            ),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                onTap: signOut,
+                child: Text(
+                  'Sign Out',
+                  style: myTheme.textTheme.displayMedium,
+                ),
+              )
+            ],
           ),
         ],
       ),
@@ -76,22 +98,26 @@ class _BodyDisplay extends StatelessWidget {
 
   final int selectedPosition;
 
-  final List<Widget> bodyWidgets = [
-    const HomeScreen(),
-    const SearchScreen(),
-    const Scaffold(
-      body: Text('MyList'),
-    ),
-    const AuthScreen(),
-    const AuthScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return IndexedStack(
-        index: selectedPosition,
-        children: bodyWidgets,
-        );
+    switch (selectedPosition) {
+      case 0:
+        return const HomeScreen();
+      case 1:
+        return const SearchScreen();
+      case 2:
+        return const ListScreen();
+      case 3:
+        return FirebaseAuth.instance.currentUser == null
+            ? const AuthScreen()
+            : const FollowingScreen();
+      default:
+        return FirebaseAuth.instance.currentUser == null
+            ? const AuthScreen() //TODO Auth Screen does not automatically change when we sign in
+            : ProfileScreen(
+                uid: FirebaseAuth.instance.currentUser!.uid,
+              );
+    }
   }
 }
 
@@ -103,40 +129,38 @@ class _BottomBarDisplay extends StatelessWidget {
   final Function updateSelectedPositonWithSetState;
   final CircularBottomNavigationController navController;
 
-
-  List<TabItem> returnTabItems(BuildContext context){
+  List<TabItem> returnTabItems(BuildContext context) {
     final myTheme = Theme.of(context);
-  return 
-    [
+    return [
       TabItem(
         Icons.home,
         'Home',
         Colors.lime[900]!,
-        labelStyle: TextStyle(color: myTheme.colorScheme.onSurface)
+        labelStyle: TextStyle(color: myTheme.colorScheme.onSurface),
       ),
       TabItem(
         Icons.search,
         'Search',
         myTheme.colorScheme.primary,
-        labelStyle: TextStyle(color: myTheme.colorScheme.onSurface)
+        labelStyle: TextStyle(color: myTheme.colorScheme.onSurface),
       ),
       TabItem(
         Icons.list,
         'MyList',
-        myTheme.colorScheme.primary,
-        labelStyle: TextStyle(color: myTheme.colorScheme.onSurface)
+        Colors.teal[400]!,
+        labelStyle: TextStyle(color: myTheme.colorScheme.onSurface),
       ),
       TabItem(
         Icons.feed,
         'Following',
-        myTheme.colorScheme.primary,
-        labelStyle: TextStyle(color: myTheme.colorScheme.onSurface)
+        Colors.cyan[900]!,
+        labelStyle: TextStyle(color: myTheme.colorScheme.onSurface),
       ),
       TabItem(
         Icons.person,
         'Profile',
-        myTheme.colorScheme.primary,
-        labelStyle: TextStyle(color: myTheme.colorScheme.onSurface)
+        Colors.purple[900]!,
+        labelStyle: TextStyle(color: myTheme.colorScheme.onSurface),
       ),
     ];
   }
@@ -152,7 +176,7 @@ class _BottomBarDisplay extends StatelessWidget {
       backgroundBoxShadow: [BoxShadow(color: myTheme.scaffoldBackgroundColor)],
       selectedCallback: (selectedPos) =>
           updateSelectedPositonWithSetState(selectedPos),
-          barHeight: 48,
+      barHeight: 48,
     );
   }
 }

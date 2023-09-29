@@ -80,7 +80,10 @@ class _EmailAndPasswordSignInState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Don\'t have an account? Click here to ', style: myTheme.textTheme.displayMedium,),
+                    Text(
+                      'Don\'t have an account? Click here to ',
+                      style: myTheme.textTheme.displayMedium,
+                    ),
                     GestureDetector(
                       onTap: () => Navigator.pushNamed(
                         context,
@@ -100,6 +103,7 @@ class _EmailAndPasswordSignInState
                 VerticalSpacing(size.height * 0.05),
                 MyElevatedButton(
                   onPressed: signInWithEmail,
+                  backgroundColor: Colors.indigo[900]!,
                   label: 'Sign In',
                   imageUrl: null,
                   labelIcon: null,

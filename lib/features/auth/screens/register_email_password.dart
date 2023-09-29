@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:show_list/features/auth/controller/auth_controller.dart';
-import 'package:show_list/features/auth/screens/verify_email_screen.dart';
+import 'package:show_list/features/auth/screens/user_information_screen.dart';
 import 'package:show_list/features/auth/widgets/my_text_form_fields.dart';
 import 'package:show_list/shared/constants.dart';
 import 'package:show_list/shared/widgets/my_elevated_button.dart';
@@ -33,12 +33,9 @@ class _EmailAndPasswordSignInState
       if (context.mounted) {
         Navigator.pushNamed(
           context,
-          VerifyEmailScreen.routeName,
+          UserInformationScreen.routeName,
           arguments: _controllerForEmail.text.trim(),
         );
-        await ref
-            .read(authControllerProvider)
-            .sendingEmailVerification(context: context);
       }
     }
   }
@@ -123,6 +120,7 @@ class _EmailAndPasswordSignInState
                 VerticalSpacing(size.height * 0.05),
                 MyElevatedButton(
                   onPressed: registerWithEmail,
+                  backgroundColor: Colors.indigo[900]!,
                   label: 'Sign Up',
                   imageUrl: null,
                   labelIcon: null,

@@ -42,12 +42,20 @@ dependencies:
   flutter_spinkit: ^5.2.0
   flutter_riverpod: ^2.3.6
   circular_bottom_navigation: ^2.3.0
-  trakt_dart: ^1.0.0
   http: ^0.13.6
   cached_network_image: ^3.2.3
   uuid: ^3.0.7
   youtube_player_flutter: ^8.1.2
   shared_preferences: ^2.2.0
+  cloud_firestore: ^4.8.4
+  flutter_multi_select_items: ^0.4.2
+  customizable_datetime_picker: ^0.0.3
+  flutter_animation_progress_bar: ^2.3.1
+  dialogs: ^0.0.7
+  flutter_custom_selector: ^0.0.3
+  image_picker: ^1.0.4
+  firebase_storage: ^11.2.6
+  sqflite: ^2.3.0
 
 dev_dependencies:
   flutter_test:

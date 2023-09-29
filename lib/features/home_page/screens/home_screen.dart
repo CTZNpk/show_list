@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:show_list/features/home_page/controller/home_screen_controller.dart';
-import 'package:show_list/features/home_page/widgets/horizontal_list_anime.dart';
 import 'package:show_list/features/home_page/widgets/horizontal_list_movie.dart';
+import 'package:show_list/shared/enums/show_type.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -11,9 +11,7 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen>
-     {
-
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final myTheme = Theme.of(context);
@@ -28,8 +26,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             const _HomePageHeading(heading: 'Trending Movies'),
             SizedBox(
               height: size.height * 0.30 + 20,
-              child: _ReturnAnimeOrMovieHorizontalList(
-                isAnime: false,
+              child: HorizontalList(
+                showType: ShowType.movie,
                 dataFunction:
                     ref.read(homeScreenControllerProvider).getTrendingMovies,
               ),
@@ -37,94 +35,94 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             const _HomePageHeading(heading: 'Popular Movies'),
             SizedBox(
               height: size.height * 0.30 + 20,
-              child: _ReturnAnimeOrMovieHorizontalList(
+              child: HorizontalList(
                 dataFunction:
                     ref.read(homeScreenControllerProvider).getPopularMovies,
-                isAnime: false,
+                showType: ShowType.movie,
               ),
             ),
             const _HomePageHeading(heading: 'Box Office Movies'),
             SizedBox(
               height: size.height * 0.30 + 20,
-              child: _ReturnAnimeOrMovieHorizontalList(
+              child: HorizontalList(
                 dataFunction:
                     ref.read(homeScreenControllerProvider).getBoxOfficeMovies,
-                isAnime: false,
+                showType: ShowType.movie,
               ),
             ),
             const _HomePageHeading(
-                heading: 'Most Watched Movies In The Past Week'),
+                heading: 'Top Rated Movies '),
             SizedBox(
               height: size.height * 0.30 + 20,
-              child: _ReturnAnimeOrMovieHorizontalList(
+              child: HorizontalList(
                 dataFunction:
-                    ref.read(homeScreenControllerProvider).getMostWatchedMovies,
-                isAnime: false,
+                    ref.read(homeScreenControllerProvider).getTopRatedMovies,
+                showType: ShowType.movie,
               ),
             ),
             const _HomePageHeading(heading: 'Trending TV Shows'),
             SizedBox(
               height: size.height * 0.30 + 20,
-              child: _ReturnAnimeOrMovieHorizontalList(
+              child: HorizontalList(
                 dataFunction:
                     ref.read(homeScreenControllerProvider).getTrendingShows,
-                isAnime: false,
+                showType: ShowType.show,
               ),
             ),
             const _HomePageHeading(heading: 'Popular Shows'),
             SizedBox(
               height: size.height * 0.30 + 20,
-              child: _ReturnAnimeOrMovieHorizontalList(
+              child: HorizontalList(
                 dataFunction:
                     ref.read(homeScreenControllerProvider).getPopularShows,
-                isAnime: false,
+                showType: ShowType.show,
               ),
             ),
             const _HomePageHeading(
-                heading: 'Most Watched TV Shows In The Past Week'),
+                heading: 'Top Rated TV Shows'),
             SizedBox(
               height: size.height * 0.30 + 20,
-              child: _ReturnAnimeOrMovieHorizontalList(
+              child: HorizontalList(
                 dataFunction:
-                    ref.read(homeScreenControllerProvider).getMostWatchedShows,
-                isAnime: false,
+                    ref.read(homeScreenControllerProvider).getTopRatedShows,
+                showType: ShowType.show,
               ),
             ),
             const _HomePageHeading(heading: 'Highest Rated Anime'),
             SizedBox(
               height: size.height * 0.30 + 20,
-              child: _ReturnAnimeOrMovieHorizontalList(
+              child: HorizontalList(
                 dataFunction: ref
                     .read(homeScreenControllerProvider)
                     .getHighestRankedAnime,
-                isAnime: true,
+                showType: ShowType.anime,
               ),
             ),
             const _HomePageHeading(heading: 'Popular Anime'),
             SizedBox(
               height: size.height * 0.30 + 20,
-              child: _ReturnAnimeOrMovieHorizontalList(
+              child: HorizontalList(
                 dataFunction:
                     ref.read(homeScreenControllerProvider).getPopularAnime,
-                isAnime: true,
+                showType: ShowType.anime,
               ),
             ),
             const _HomePageHeading(heading: 'Top Airing Anime'),
             SizedBox(
               height: size.height * 0.30 + 20,
-              child: _ReturnAnimeOrMovieHorizontalList(
+              child: HorizontalList(
                 dataFunction:
                     ref.read(homeScreenControllerProvider).getTopAiringAnime,
-                isAnime: true,
+                showType: ShowType.anime,
               ),
             ),
             const _HomePageHeading(heading: 'Upcoming Anime'),
             SizedBox(
               height: size.height * 0.30 + 20,
-              child: _ReturnAnimeOrMovieHorizontalList(
+              child: HorizontalList(
                 dataFunction:
                     ref.read(homeScreenControllerProvider).getUpcomingAnime,
-                isAnime: true,
+                showType: ShowType.anime,
               ),
             ),
           ],
@@ -149,40 +147,5 @@ class _HomePageHeading extends StatelessWidget {
             ?.copyWith(color: myTheme.colorScheme.primary),
       ),
     );
-  }
-}
-
-class _ReturnAnimeOrMovieHorizontalList extends StatefulWidget {
-  const _ReturnAnimeOrMovieHorizontalList({
-    required this.isAnime,
-    required this.dataFunction,
-  });
-
-  final Function dataFunction;
-  final bool isAnime;
-
-  @override
-  State<_ReturnAnimeOrMovieHorizontalList> createState() =>
-      _ReturnAnimeOrMovieHorizontalListState();
-}
-
-class _ReturnAnimeOrMovieHorizontalListState
-    extends State<_ReturnAnimeOrMovieHorizontalList>
-    with AutomaticKeepAliveClientMixin {
-  late var data = widget.dataFunction();
-
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return widget.isAnime
-        ? HorizontalListAnime(
-            data: data,
-          )
-        : HorizontalListMovie(
-            data: data,
-          );
   }
 }

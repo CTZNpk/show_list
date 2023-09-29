@@ -33,7 +33,7 @@ class MyTextFormFieldsState extends State<MyTextFormFields> {
         decoration: InputDecoration(
           filled: true,
           label: Text(widget.label),
-          fillColor: myTheme.colorScheme.primaryContainer,
+          fillColor: myTheme.scaffoldBackgroundColor,
         ),
       ),
     );

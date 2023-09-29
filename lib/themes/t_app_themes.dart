@@ -6,6 +6,7 @@ class TAppTheme {
       primary: Colors.indigo[800]!,
       secondary: Colors.grey[300]!, //Used for search suggestions
       onSurface: Colors.black,
+      primaryContainer: Colors.grey,
     ),
     scaffoldBackgroundColor: Colors.white,
     textTheme: const TextTheme(
@@ -20,6 +21,10 @@ class TAppTheme {
       ),
       labelLarge: TextStyle(
         fontSize: 18,
+        color: Colors.black,
+      ),
+      labelSmall: TextStyle(
+        fontSize: 10,
         color: Colors.black,
       ),
       displayMedium: TextStyle(
@@ -47,8 +52,8 @@ class TAppTheme {
     colorScheme: ColorScheme.dark(
       primary: Colors.indigo[800]!,
       secondary: Colors.grey[800]!, //Used for search suggestions
-      primaryContainer: Colors.black,
       onSurface: Colors.white,
+      primaryContainer: Colors.grey[900],
     ),
     scaffoldBackgroundColor: Colors.black,
     textTheme: const TextTheme(
@@ -61,6 +66,7 @@ class TAppTheme {
       ),
       labelLarge: TextStyle(fontSize: 18),
       displayMedium: TextStyle(fontSize: 14),
+      labelSmall: TextStyle(fontSize: 10),
       displaySmall: TextStyle(fontSize: 8),
     ),
     elevatedButtonTheme: const ElevatedButtonThemeData(

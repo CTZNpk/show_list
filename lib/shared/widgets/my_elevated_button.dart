@@ -8,20 +8,27 @@ class MyElevatedButton extends StatelessWidget {
     required this.labelIcon,
     required this.imageUrl,
     required this.onPressed,
+    required this.backgroundColor,
   });
 
   final String label;
   final IconData? labelIcon;
   final String? imageUrl;
+  final Color backgroundColor;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
+    final myTheme = Theme.of(context);
     return Center(
       child: SizedBox(
         width: 300,
         child: ElevatedButton(
           onPressed: onPressed,
+          style: ButtonStyle(
+            foregroundColor: const MaterialStatePropertyAll(Colors.white),
+            backgroundColor: MaterialStatePropertyAll(backgroundColor),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

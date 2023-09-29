@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:show_list/features/search_page/controller/search_screen_controller.dart';
 import 'package:show_list/features/search_page/services/search_bar_screen.dart';
 import 'package:show_list/features/search_page/widgets/display_search_results.dart';
 import 'package:show_list/shared/enums/show_type.dart';
@@ -15,30 +14,25 @@ class ShowResultService {
   BuildContext context;
   WidgetRef ref;
 
-  Future<void> getSearchResults(
-      {required ShowType showType,
-      required ShowResultsWrapper resultWrapper,
-      required ScrollController controller}) async {
+  Future<String?> showSearchDelegate({
+    required ShowType showType,
+    required ScrollController controller,
+   required FilterSearchWrapper filterSearch, 
+  }) async {
     controller.jumpTo(0);
     final searchText = await showSearch(
       context: context,
       delegate: SearchBarScreen(
         onSearchChanged: _getRecentSearchesLike,
         showType: showType,
+        filterSearch: filterSearch,
       ),
     );
-    resultWrapper.resultOfSearch = [];
-    resultWrapper.foundSearches = {};
-    if (showType == ShowType.anime) {
-      resultWrapper.resultOfSearch = await ref
-          .read(searchScreenControllerProvider)
-          .searchAnimeResults(searchText!);
-    } else {
-      resultWrapper.resultOfSearch = await ref
-          .read(searchScreenControllerProvider)
-          .searchMoviesAndShowsResults(searchText!, showType);
+    if(filterSearch.isFilterSearch){
+      return  searchText;
     }
-    await _saveToRecentSearches(searchText, showType);
+    _saveToRecentSearches(searchText, showType);
+    return searchText;
   }
 
   Future<List<String>> _getRecentSearchesLike(

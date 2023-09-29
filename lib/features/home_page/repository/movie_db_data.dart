@@ -10,14 +10,14 @@ abstract class MovieDbData {
   final String apiUrl = 'https://moviesdatabase.p.rapidapi.com/titles/';
   final String imdbID;
 
-  Future<String> getData();
+  Future<String?> getData();
 }
 
 class GetImdbRating extends MovieDbData {
   GetImdbRating({required super.imdbID});
 
   @override
-  Future<String> getData() async {
+  Future<String?> getData() async {
    try {
       final completeUrl = Uri.parse('$apiUrl$imdbID/ratings');
       Response response = await get(completeUrl, headers: {
@@ -25,6 +25,9 @@ class GetImdbRating extends MovieDbData {
         'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com'
       });
       Map data = jsonDecode(response.body);
+      if(data['results'] == null){
+        return null;
+      }
       return data['results']['averageRating'].toString();
     } catch (e) {
       rethrow;

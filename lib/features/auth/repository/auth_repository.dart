@@ -2,17 +2,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:show_list/features/main_layout/controller/main_layout_controller.dart';
+import 'package:show_list/shared/sql_service/sql_services.dart';
 import 'package:show_list/shared/utils.dart';
 
 final authRepositoryProvider = Provider(
-  (ref) => AuthRepository(auth: FirebaseAuth.instance),
+  (ref) => AuthRepository(
+    auth: FirebaseAuth.instance,
+    ref: ref,
+  ),
 );
 
 class AuthRepository {
-  AuthRepository({required this.auth});
+  AuthRepository({required this.auth, required this.ref});
 
   final FirebaseAuth auth;
   AuthSignIn? signIn;
+  ProviderRef ref;
 
   Future creatingUserWithEmailAndPassword({
     required String email,
@@ -21,7 +27,10 @@ class AuthRepository {
   }) async {
     signIn = _CreateUserWithEmailAndPassword(
         auth: auth, email: email, password: password);
-    await signIn?.signingIn(context: context);
+    await ref.read(sqlHelperProvider).createLocalTables();
+    if (context.mounted) {
+      await signIn?.signingIn(context: context);
+    }
   }
 
   Future signingInUserWithEmailAndPassword({
@@ -31,21 +40,31 @@ class AuthRepository {
   }) async {
     signIn = _SignInUserWithEmailAndPassword(
         auth: auth, email: email, password: password);
-    await signIn?.signingIn(context: context);
+    await ref.read(sqlHelperProvider).createLocalTables();
+    if (context.mounted) {
+      await signIn?.signingIn(context: context);
+    }
+    await ref.read(mainLayoutControllerProvider).requestDataFromFirebase();
   }
 
   Future signingInUserWithGoogle({
     required BuildContext context,
   }) async {
     signIn = _SignInUserWithGoogle(auth: auth);
-    await signIn?.signingIn(context: context);
+    await ref.read(sqlHelperProvider).createLocalTables();
+    if (context.mounted) {
+      await signIn?.signingIn(context: context);
+    }
+    await ref.read(mainLayoutControllerProvider).requestDataFromFirebase();
   }
 
-  Future sendingEmailVerification(BuildContext context) async {
+  Future signingOut() async {
     try {
-      await auth.currentUser!.sendEmailVerification();
+      ref.read(mainLayoutControllerProvider).resetLists();
+      await ref.read(sqlHelperProvider).deleteLocalTables();
+      await auth.signOut();
     } catch (e) {
-      showSnackBar(context: context, content: e.toString());
+      debugPrint('Cannot Sign Out');
     }
   }
 }

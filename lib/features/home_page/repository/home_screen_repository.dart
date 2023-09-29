@@ -2,116 +2,156 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:show_list/features/home_page/repository/mal_anime_data.dart';
 import 'package:show_list/features/home_page/repository/movie_db_data.dart';
-import 'package:show_list/features/home_page/repository/omdb_data.dart';
-import 'package:show_list/features/home_page/repository/trakt_data.dart';
+import 'package:show_list/features/home_page/repository/tmdb_data.dart';
+import 'package:show_list/shared/enums/show_type.dart';
 import 'package:show_list/shared/model/mal_anime_data_model.dart';
-import 'package:show_list/shared/model/omdb_data_model.dart';
-import 'package:show_list/shared/model/trakt_data_model.dart';
+import 'package:show_list/shared/model/short_mal_data_model.dart';
+import 'package:show_list/shared/model/short_tmdb_datamodel.dart';
+import 'package:show_list/shared/model/tmdb_datamodel.dart';
 
 final homeScreenRepositoryProvider = Provider((ref) => HomeScreenRepository());
 
 class HomeScreenRepository {
-  OmdbData? omdbData;
-  TraktData? traktData;
+  TMDBData? tmdbData;
   MovieDbData? movieDbData;
   MalAnimeData? malAnimeData;
 
-  Future<List<TraktDataModel>?> getTrendingMovies() async {
+  Future<List<ShortTMDBDataModel>?> getTrendingMovies(int pageNumber) async {
     try {
-      traktData = GetTrendingMovies();
-      return await traktData?.getData();
+      tmdbData = TrendingMovies();
+      return await tmdbData?.getData(pageNumber);
     } catch (e) {
       debugPrint(e.toString());
       return null;
     }
   }
 
-  Future<List<TraktDataModel>?> getPopularMovies() async {
+  Future<List<ShortTMDBDataModel>?> getPopularMovies(int pageNumber) async {
     try {
-      traktData = GetPopularMovies();
-      return await traktData?.getData();
+      tmdbData = PopularMovies();
+      return await tmdbData?.getData(pageNumber);
     } catch (e) {
       debugPrint(e.toString());
       return null;
     }
   }
 
-  Future<List<TraktDataModel>?> getBoxOfficeMovies() async {
+  Future<List<ShortTMDBDataModel>?> getNowPlayingMovies(int pageNumber) async {
     try {
-      traktData = GetBoxOfficeMovies();
-      return await traktData?.getData();
+      tmdbData = NowPlayingMovies();
+      return await tmdbData?.getData(pageNumber);
     } catch (e) {
       debugPrint(e.toString());
       return null;
     }
   }
 
-  Future<List<TraktDataModel>?> getMostWatchedMovies() async {
+  Future<List<ShortTMDBDataModel>?> getTopRatedMovies(int pageNumber) async {
     try {
-      traktData = GetMostWatchedMovies();
-      return await traktData?.getData();
+      tmdbData = TopRatedMovies();
+      return await tmdbData?.getData(pageNumber);
     } catch (e) {
       debugPrint(e.toString());
       return null;
     }
   }
 
-  Future<List<TraktDataModel>?> getTrendingShows() async {
+  Future<List<ShortTMDBDataModel>?> getRecommendedMovies(
+      String movieID, int pageNumber) async {
     try {
-      traktData = GetTrendingShows();
-      return await traktData?.getData();
+      tmdbData = RecommendedMovie(movieID: movieID);
+      return await tmdbData?.getData(pageNumber);
     } catch (e) {
       debugPrint(e.toString());
       return null;
     }
   }
 
-  Future<List<TraktDataModel>?> getPopularShows() async {
+  Future<List<ShortTMDBDataModel>?> getTrendingShows(int pageNumber) async {
     try {
-      traktData = GetPopularShows();
-      return await traktData?.getData();
+      tmdbData = TrendingShows();
+      return await tmdbData?.getData(pageNumber);
     } catch (e) {
       debugPrint(e.toString());
       return null;
     }
   }
 
-  Future<List<TraktDataModel>?> getMostWatchedShows(
-      ) async {
+  Future<List<ShortTMDBDataModel>?> getPopularShows(int pageNumber) async {
     try {
-      traktData = GetMostWatchedShows();
-      return await traktData?.getData();
+      tmdbData = PopularShow();
+      return await tmdbData?.getData(pageNumber);
     } catch (e) {
       debugPrint(e.toString());
       return null;
     }
   }
 
-  Future<List<MalAnimeDataModel>> getHighestRankedAnime() async {
+  Future<List<ShortTMDBDataModel>?> getTopRatedShows(int pageNumber) async {
+    try {
+      tmdbData = TopRatedShow();
+      return await tmdbData?.getData(pageNumber);
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
+
+  Future<List<ShortTMDBDataModel>?> getRecommendedShows(
+      String showID, int pageNumber) async {
+    try {
+      tmdbData = RecommendedShow(showID: showID);
+      return await tmdbData?.getData(pageNumber);
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
+
+  Future<List<ShortMalData>> getHighestRankedAnime(int pageNumber) async {
     malAnimeData = GetAnimeFromRanking();
-    return await malAnimeData?.getData();
+    return await malAnimeData?.getData(pageNumber);
   }
 
-  Future<List<MalAnimeDataModel>> getPopularAnime() async {
+  Future<List<ShortMalData>> getPopularAnime(int pageNumber) async {
     malAnimeData = GetMostPopularAnime();
-    return await malAnimeData?.getData();
+    return await malAnimeData?.getData(pageNumber);
   }
 
-  Future<List<MalAnimeDataModel>> getTopAiringAnime() async {
+  Future<List<ShortMalData>> getTopAiringAnime(int pageNumber) async {
     malAnimeData = GetAiringAnime();
-    return await malAnimeData?.getData();
+    return await malAnimeData?.getData(pageNumber);
   }
 
-  Future<List<MalAnimeDataModel>> getUpcomingAnime() async {
+  Future<List<ShortMalData>> getUpcomingAnime(int pageNumber) async {
     malAnimeData = GetUpcomingAnime();
-    return await malAnimeData?.getData();
+    return await malAnimeData?.getData(pageNumber);
   }
 
-  Future<OmdbDataModel?> getOmdbData(String imdbID) async {
+  Future<TMDBDataModel?> getTmdbData(String tmdbID, ShowType showType) async {
     try {
-      omdbData = GetShowData(imdbID: imdbID);
-      OmdbDataModel? data = await omdbData?.getData();
-      return data;
+      tmdbData = GetTMDBData(tmdbID: tmdbID, showType: showType);
+      return await tmdbData!.getData(1);
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
+
+Future<MalAnimeDataModel?> getAnimeDataFromID(String malID) async {
+    try {
+      malAnimeData = GetAnimeDataFromID(malID: malID);
+      return await malAnimeData!.getData(1);
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
+
+  Future<String?> getImdbID(String tmdbID, ShowType showType) async {
+    try {
+      tmdbData = GetIMDBID(tmdbID: tmdbID, showType: showType);
+      return await tmdbData!.getData(1);
     } catch (e) {
       debugPrint(e.toString());
       return null;

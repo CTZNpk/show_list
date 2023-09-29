@@ -24,7 +24,6 @@ class _SearchScreen extends ConsumerState<SearchScreen>
   @override
   Widget build(BuildContext context) {
     final myTheme = Theme.of(context);
-    final size = MediaQuery.of(context).size;
     return Scaffold(
       body: Column(
         children: [
