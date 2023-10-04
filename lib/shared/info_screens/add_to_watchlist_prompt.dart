@@ -98,6 +98,7 @@ class _ShowAddToWatchlistPromptState
             if (widget.data.planType == PlanType.finished) {
               widget.data.episodesWatched = widget.data.numOfEpisodes;
             }
+            widget.data.watchedTime = DateTime.now();
             if (widget.showType == ShowType.anime) {
               ref
                   .read(mainLayoutControllerProvider)

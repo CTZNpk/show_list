@@ -1,10 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:show_list/features/my_list/repository/my_list_repository.dart';
 import 'package:show_list/shared/enums/show_type.dart';
-import 'package:show_list/shared/model/mal_anime_data_model.dart';
 import 'package:show_list/shared/model/short_mal_data_model.dart';
 import 'package:show_list/shared/model/short_tmdb_datamodel.dart';
-import 'package:show_list/shared/model/tmdb_datamodel.dart';
 
 final myListControllerProvider = Provider((ref) {
   final myListRepository = ref.read(myListRepositoryProvider);
@@ -17,8 +15,8 @@ class MyListController {
   MyListRepository myListRepository;
 
   Future addToWatchList({
-    MalAnimeDataModel? animeData,
-    TMDBDataModel? movieShowData,
+    ShortMalData? animeData,
+    ShortTMDBDataModel? movieShowData,
   }) async {
     await myListRepository.storeToWatch(
       animeData: animeData,

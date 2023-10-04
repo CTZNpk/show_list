@@ -8,13 +8,13 @@ abstract class MalAnimeData {
   final String apiUrl = 'https://api.myanimelist.net/v2/';
   String fields = 'fields=id,title,main_picture,mean,num_episodes,';
   //'fields=id,title,main_picture,related_anime,alternative_titles,start_date,synopsis,end_date,mean,rank,popularity,status,genres,num_episodes';
-  final String clientId = '351028ea7ff2dbfd3e168810a70e7b90';
+  final String clientId = '<Client ID From Mal>';
 
   Future getData(int pageNumber);
 
   Future getFromUrl(String completeUrl) async {
     final Map<String, String> headers = {
-      'X-MAL-ClIENT-ID': '351028ea7ff2dbfd3e168810a70e7b90',
+      'X-MAL-ClIENT-ID': clientId,
     };
 
     try {

@@ -11,6 +11,8 @@ class ProfileDataModel {
     required this.about,
     required this.followersList,
     required this.followingList,
+    required this.followingRequestList,
+    required this.requestedPeople,
     this.followingCount = 0,
     this.followersCount = 0,
     required this.topMovies,
@@ -24,6 +26,8 @@ class ProfileDataModel {
     List<ShortMalData> anime = [];
     List<String> followersLists = [];
     List<String> followingLists = [];
+    List<String> followingreqLists = [];
+    List<String> requestedPeople = [];
 
     for (var items in data['topMovies']) {
       movies.add(ShortTMDBDataModel.fromMap(items, ShowType.movie));
@@ -44,6 +48,14 @@ class ProfileDataModel {
       followingLists.add(items);
     }
 
+    for (var items in data['following_request_list']) {
+      followingreqLists.add(items);
+    }
+
+    for (var items in data['requested_people']) {
+      requestedPeople.add(items);
+    }
+
     return ProfileDataModel(
       uid: data['uid'],
       userName: data['userName'],
@@ -53,6 +65,8 @@ class ProfileDataModel {
       followersCount: data['followers_count'],
       followersList: followersLists,
       followingList: followingLists,
+      followingRequestList: followingreqLists,
+      requestedPeople: requestedPeople,
       topMovies: movies,
       topShows: shows,
       topAnime: anime,
@@ -67,6 +81,8 @@ class ProfileDataModel {
   int followersCount;
   List<String> followersList;
   List<String> followingList;
+  List<String> followingRequestList;
+  List<String> requestedPeople;
   List<ShortTMDBDataModel> topMovies;
   List<ShortTMDBDataModel> topShows;
   List<ShortMalData> topAnime;
@@ -97,6 +113,8 @@ class ProfileDataModel {
       'followers_count': followersCount,
       'followers_list': followersList,
       'following_list': followingList,
+      'following_request_list': followingRequestList,
+      'requested_people': requestedPeople,
       'topMovies': movies,
       'topShows': shows,
       'topAnime': animes,

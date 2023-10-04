@@ -407,38 +407,24 @@ class _DisplayRecommendationsState
 
   @override
   Widget build(BuildContext context) {
-    final myTheme = Theme.of(context);
 
     super.build(context);
-    return Column(
-      children: [
-        GridView.builder(
-          controller: ScrollController(),
-          shrinkWrap: true,
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 200,
-            childAspectRatio: 7 / 8,
-            crossAxisSpacing: 20,
-            mainAxisSpacing: 20,
-          ),
-          itemCount: dataList.length,
-          itemBuilder: (context, index) {
-            return DisplayPosterGrid(
-              showData: dataList[index],
-              showType: widget.showType,
-            );
-          },
-        ),
-        noMoreResults
-            ? Padding(
-                padding: const EdgeInsets.only(bottom: 40.0),
-                child: Text(
-                  'No Recommendations Available',
-                  style: myTheme.textTheme.displayMedium,
-                ),
-              )
-            : const SizedBox.shrink(),
-      ],
+    return GridView.builder(
+      controller: ScrollController(),
+      shrinkWrap: true,
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 200,
+        childAspectRatio: 7 / 8,
+        crossAxisSpacing: 20,
+        mainAxisSpacing: 20,
+      ),
+      itemCount: dataList.length,
+      itemBuilder: (context, index) {
+        return DisplayPosterGrid(
+          showData: dataList[index],
+          showType: widget.showType,
+        );
+      },
     );
   }
 

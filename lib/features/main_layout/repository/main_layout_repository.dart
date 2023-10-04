@@ -54,7 +54,7 @@ class MainLayoutRepository extends ChangeNotifier {
       ref.read(sqlHelperProvider).insertIntoLocalList(movieShowData: data);
     } else {
       ref.read(sqlHelperProvider).insertIntoLocalList(animeData: data);
-      animeList[data.malId] = data;
+      animeList[data.malID] = data;
     }
     notifyListeners();
   }
@@ -72,9 +72,12 @@ class MainLayoutRepository extends ChangeNotifier {
   Future addToMovieList(TMDBDataModel movieData) async {
     await ref
         .read(myListControllerProvider)
-        .addToWatchList(movieShowData: movieData);
+        .addToWatchList(movieShowData: movieData.toShortTMDBDataModel());
 
     movieList[movieData.tmdbID] = movieData.toShortTMDBDataModel();
+    ref
+        .read(sqlHelperProvider)
+        .insertIntoLocalList(movieShowData: movieData.toShortTMDBDataModel());
 
     notifyListeners();
   }
@@ -82,16 +85,22 @@ class MainLayoutRepository extends ChangeNotifier {
   Future addToShowList(TMDBDataModel showData) async {
     await ref
         .read(myListControllerProvider)
-        .addToWatchList(movieShowData: showData);
+        .addToWatchList(movieShowData: showData.toShortTMDBDataModel());
     showList[showData.tmdbID] = showData.toShortTMDBDataModel();
+    ref
+        .read(sqlHelperProvider)
+        .insertIntoLocalList(movieShowData: showData.toShortTMDBDataModel());
     notifyListeners();
   }
 
   Future addToAnimeList(MalAnimeDataModel animeData) async {
     await ref
         .read(myListControllerProvider)
-        .addToWatchList(animeData: animeData);
+        .addToWatchList(animeData: animeData.toShortMalData());
     animeList[animeData.malId] = animeData.toShortMalData();
+    ref
+        .read(sqlHelperProvider)
+        .insertIntoLocalList(animeData: animeData.toShortMalData());
     notifyListeners();
   }
 

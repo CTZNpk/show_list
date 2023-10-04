@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:show_list/features/profile_page/controller/profile_controller.dart';
@@ -22,6 +23,14 @@ class FollowingData with ChangeNotifier {
   DateTime latestTime = DateTime(2000);
 
   Future getFollowingDataFromSql() async {
+    if (followingData.isNotEmpty) {
+      return followingData;
+    }
+    await ref.read(sqlHelperProvider).deleteFollowingDataBeforeTime(
+          DateTime.now().subtract(
+            const Duration(days: 30),
+          ),
+        );
     followingData = await ref.read(sqlHelperProvider).readLocalFollowingData();
     for (var following in followingData) {
       if (following.dataDate.millisecondsSinceEpoch >
@@ -30,6 +39,7 @@ class FollowingData with ChangeNotifier {
       }
     }
     await _getFollowingDataFromFirebase();
+    followingData.sort((a, b) => b.dataDate.compareTo(a.dataDate));
     return followingData;
   }
 
@@ -59,6 +69,11 @@ class FollowingData with ChangeNotifier {
         followingData.add(data);
       }
     }
+  }
+
+  void resetFollowingData(){
+    followingData = [];
+    latestTime = DateTime(2000);
   }
 
   List getFollowingData() {

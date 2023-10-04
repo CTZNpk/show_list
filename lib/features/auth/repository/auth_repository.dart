@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:show_list/features/following_page/controller/following_page_controller.dart';
 import 'package:show_list/features/main_layout/controller/main_layout_controller.dart';
+import 'package:show_list/features/profile_page/controller/profile_controller.dart';
 import 'package:show_list/shared/sql_service/sql_services.dart';
 import 'package:show_list/shared/utils.dart';
 
@@ -45,6 +47,9 @@ class AuthRepository {
       await signIn?.signingIn(context: context);
     }
     await ref.read(mainLayoutControllerProvider).requestDataFromFirebase();
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
   }
 
   Future signingInUserWithGoogle({
@@ -60,9 +65,11 @@ class AuthRepository {
 
   Future signingOut() async {
     try {
+      await auth.signOut();
       ref.read(mainLayoutControllerProvider).resetLists();
       await ref.read(sqlHelperProvider).deleteLocalTables();
-      await auth.signOut();
+      ref.read(profileControllerProvider).removeProfile();
+      ref.read(followingPageControllerProvider).resetFollowingData();
     } catch (e) {
       debugPrint('Cannot Sign Out');
     }

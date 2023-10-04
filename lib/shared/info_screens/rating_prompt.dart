@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:show_list/features/main_layout/controller/main_layout_controller.dart';
 import 'package:show_list/features/my_list/controller/my_list_controller.dart';
 import 'package:show_list/shared/constants.dart';
 import 'package:show_list/shared/enums/show_type.dart';

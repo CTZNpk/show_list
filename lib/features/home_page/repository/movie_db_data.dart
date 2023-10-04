@@ -11,6 +11,7 @@ abstract class MovieDbData {
   final String imdbID;
 
   Future<String?> getData();
+
 }
 
 class GetImdbRating extends MovieDbData {
@@ -21,7 +22,7 @@ class GetImdbRating extends MovieDbData {
    try {
       final completeUrl = Uri.parse('$apiUrl$imdbID/ratings');
       Response response = await get(completeUrl, headers: {
-        'X-RapidAPI-Key': '22851e0332msh3161178955f86dcp1bdc54jsn3be80cfd6082',
+        'X-RapidAPI-Key': '<RapidAPI>',
         'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com'
       });
       Map data = jsonDecode(response.body);

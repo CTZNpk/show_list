@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       title: 'Show List',
       debugShowCheckedModeBanner: false,
       home: const Wrapper(),
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.system,
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
       onGenerateRoute: generateRoute,

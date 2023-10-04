@@ -6,7 +6,6 @@ import 'package:show_list/shared/enums/show_type.dart';
 import 'package:show_list/shared/info_screens/anime_screen.dart';
 import 'package:show_list/shared/info_screens/movie_screen.dart';
 import 'package:show_list/shared/widgets/plan_type_tag.dart';
-import 'package:uuid/uuid.dart';
 
 class HorizontalList extends ConsumerStatefulWidget {
   const HorizontalList(
@@ -27,15 +26,19 @@ class _HorizontaList extends ConsumerState<HorizontalList>
 
   void fetchDataFromFunction() async {
     final listOfResults = await widget.dataFunction(pageNumber);
-    dataList = [...dataList, ...listOfResults];
-    setState(() {});
+    if (mounted) {
+      dataList = [...dataList, ...listOfResults];
+      setState(() {});
+    }
   }
 
   void rebuildingWidget() {
     alreadyList = ref
         .watch(mainLayoutControllerProvider)
         .getDataFromShowType(widget.showType);
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -52,7 +55,9 @@ class _HorizontaList extends ConsumerState<HorizontalList>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      rebuildingWidget();
+      if (context.mounted) {
+        rebuildingWidget();
+      }
       ref.watch(mainLayoutRepositoryProvider).addListener(rebuildingWidget);
     });
   }
@@ -77,9 +82,11 @@ class _HorizontaList extends ConsumerState<HorizontalList>
       scrollDirection: Axis.horizontal,
       itemCount: dataList.length + 1,
       itemBuilder: (context, index) {
-        final specificUid = const Uuid().v4();
         if (index == dataList.length) {
-          return const CircularProgressIndicator();
+          return SizedBox(
+              height: size.height * 0.25,
+              width: size.width * 0.2,
+              child: const CircularProgressIndicator());
         }
         if (widget.showType == ShowType.anime) {
           alreadyList[dataList[index].malID] != null
@@ -115,20 +122,17 @@ class _HorizontaList extends ConsumerState<HorizontalList>
                               dataList[index].planType,
                             ],
                     ),
-                    child: Hero(
-                      tag: specificUid,
-                      child: Image.network(
-                        dataList[index].poster ??
-                            'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png',
-                        height: size.height * 0.25,
-                        width: size.width * 0.30,
-                      ),
+                    child: Image.network(
+                      dataList[index].poster ??
+                          'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png',
+                      height: size.height * 0.25,
+                      width: size.width * 0.30,
                     ),
                   ),
                   PlanTypeTag(tmdbData: dataList[index]),
                   Positioned(
-                    top: 2,
-                    right: 2,
+                    top: size.height * 0.01,
+                    right: size.width * 0.02,
                     child: Opacity(
                       opacity: 0.8,
                       child: Container(
@@ -166,5 +170,4 @@ class _HorizontaList extends ConsumerState<HorizontalList>
       },
     );
   }
-
 }

@@ -27,4 +27,8 @@ class FollowingPageController {
   Future getFollowingDataFromSql() async {
     return await followingDataRepository.getFollowingDataFromSql();
   }
+
+  void resetFollowingData(){
+    followingDataRepository.resetFollowingData();
+  }
 }

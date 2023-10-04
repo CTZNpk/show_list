@@ -25,9 +25,12 @@ class UserInformationRepository with ChangeNotifier {
       return profileData;
     }
     final response = await firestore.collection('users').doc(uid).get();
+    if (response.data() == null) {
+      return null;
+    }
     Map data = response.data()!;
     if (uid == auth.currentUser!.uid) {
-      if(data == {}){
+      if (data == {}) {
         return null;
       }
       profileData = ProfileDataModel.fromMap(data);
@@ -37,15 +40,20 @@ class UserInformationRepository with ChangeNotifier {
     return ProfileDataModel.fromMap(data);
   }
 
+  void updateProfile(String userName, String about, String profilePic) {
+    profileData!.userName = userName;
+    profileData!.about = about;
+    profileData!.profilePic = profilePic;
+    notifyListeners();
+  }
+
   Future addToTopList(
       {ShortTMDBDataModel? tmdbData,
       ShortMalData? animeData,
       required ShowType showType}) async {
     List<Map> data = [];
     if (showType == ShowType.anime) {
-      print('FINE TILL NOW');
       profileData!.topAnime.add(animeData!);
-      print('PROFILE IS NOT NULL HAHAHA');
       for (var movie in profileData!.topAnime) {
         data.add(movie.toMap());
       }
@@ -76,6 +84,51 @@ class UserInformationRepository with ChangeNotifier {
     notifyListeners();
   }
 
+  void removeProfile() {
+    profileData = null;
+    notifyListeners();
+  }
+
+  Future deleteFollower(ProfileDataModel follower) async {
+    profileData!.followersCount--;
+    profileData!.followersList.remove(follower.uid);
+    follower.followingCount--;
+    follower.followingList.remove(profileData!.uid);
+
+    await firestore.collection('users').doc(follower.uid).update(
+      {
+        'following_count': follower.followingCount,
+        'following_list': follower.followingList,
+      },
+    );
+
+    await firestore.collection('users').doc(profileData!.uid).update(
+      {
+        'followers_count': profileData!.followersCount,
+        'followers_list': profileData!.followersList,
+      },
+    );
+  }
+
+  Future rejectRequest(ProfileDataModel follower) async {
+    follower.requestedPeople.remove(profileData!.uid);
+    profileData!.followingRequestList.remove(follower.uid);
+
+    notifyListeners();
+
+    await firestore.collection('users').doc(follower.uid).update(
+      {
+        'requested_people': follower.requestedPeople,
+      },
+    );
+
+    await firestore.collection('users').doc(profileData!.uid).update(
+      {
+        'following_request_list': profileData!.followingRequestList,
+      },
+    );
+  }
+
   Future removeFollower(ProfileDataModel follower) async {
     follower.followersCount--;
     follower.followersList.remove(profileData!.uid);
@@ -101,27 +154,52 @@ class UserInformationRepository with ChangeNotifier {
     );
   }
 
-  Future addToFollower(ProfileDataModel follower) async {
-    follower.followersCount++;
-    follower.followersList.add(profileData!.uid);
+  Future addToFollowerRequest(ProfileDataModel follower) async {
+    follower.followingRequestList.add(profileData!.uid);
 
     await firestore.collection('users').doc(follower.uid).update(
       {
-        'followers_count': follower.followersCount,
-        'followers_list': follower.followersList,
+        'following_request_list': follower.followingRequestList,
       },
     );
   }
 
-  Future addFollowing(ShortProfileModel following) async {
-    profileData!.followingCount++;
-    profileData!.followingList.add(following.uid);
+  Future addtoFollowRequestList(ShortProfileModel following) async {
+    profileData!.requestedPeople.add(following.uid);
 
     notifyListeners();
     await firestore.collection('users').doc(profileData!.uid).update(
       {
-        'following_count': profileData!.followingCount,
-        'following_list': profileData!.followingList,
+        'requested_people': profileData!.requestedPeople,
+      },
+    );
+  }
+
+  Future addToFollower(ProfileDataModel follower) async {
+    profileData!.followersCount++;
+    profileData!.followersList.add(follower.uid);
+    profileData!.followingRequestList.remove(follower.uid);
+
+    notifyListeners();
+    await firestore.collection('users').doc(profileData!.uid).update(
+      {
+        'followers_count': profileData!.followersCount,
+        'followers_list': profileData!.followersList,
+        'following_request_list': profileData!.followingRequestList,
+      },
+    );
+  }
+
+  Future addFollowing(ProfileDataModel following) async {
+    following.followingCount++;
+    following.followingList.add(profileData!.uid);
+    following.requestedPeople.remove(profileData!.uid);
+
+    await firestore.collection('users').doc(following.uid).update(
+      {
+        'following_count': following.followingCount,
+        'following_list': following.followingList,
+        'requested_people': following.requestedPeople,
       },
     );
   }

@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:show_list/features/profile_page/repository/user_information_repository.dart';
 import 'package:show_list/shared/model/profile_model.dart';
 import 'package:show_list/shared/model/short_mal_data_model.dart';
-import 'package:show_list/shared/model/short_profile_model.dart';
 import 'package:show_list/shared/model/short_tmdb_datamodel.dart';
 import 'package:show_list/shared/utils/utils.dart';
 
@@ -46,18 +45,29 @@ class ProfileRepository {
       String photoUrl =
           await storingFileAndReturnDownloadUrl('profilePic/$uid', profilePic);
 
+      if (ref.read(userInformationRepositoryProvider).profileData != null) {
+        await firestore
+            .collection('users')
+            .doc(uid)
+            .update({'userName': name, 'about': about, 'profilePic': photoUrl});
+        ref
+            .read(userInformationRepositoryProvider)
+            .updateProfile(name, about, photoUrl);
+        return;
+      }
+
       var userInfo = ProfileDataModel(
         uid: uid,
         userName: name,
         profilePic: photoUrl,
-        about: about == ''
-            ? 'New To Show List'
-            : about, //TODO AppName Change What you get
+        about: about == '' ? 'New To Show List' : about,
         topShows: topShows,
         topAnime: topAnime,
         topMovies: topMovies,
         followersList: followersList,
         followingList: followingList,
+        requestedPeople: [],
+        followingRequestList: [],
       );
 
       await firestore.collection('users').doc(uid).set(userInfo.toMap());

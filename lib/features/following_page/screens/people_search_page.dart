@@ -12,6 +12,9 @@ class PeopleSearchPage extends SearchDelegate<String> {
   List<ShortProfileModel> _oldFilters = const [];
 
   Future<List<ShortProfileModel>> getResults() async {
+    if (query == '') {
+      return [];
+    }
     final response =
         await ref.read(followingPageControllerProvider).searchPeople(query);
     return response;

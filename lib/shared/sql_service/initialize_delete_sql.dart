@@ -15,7 +15,8 @@ class InitializeAndDeleteSql {
   }
 
   Future _createFollowingTable() async {
-    await db.execute('CREATE TABLE IF NOT EXISTS followingPageData (info TEXT, time INT)');
+    await db.execute(
+        'CREATE TABLE IF NOT EXISTS followingPageData (userName TEXT, time INT, userRating INT, planType TEXT, title TEXT)');
   }
 
   Future _createListTable() async {

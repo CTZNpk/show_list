@@ -6,8 +6,7 @@ import 'package:show_list/shared/model/tmdb_datamodel.dart';
 
 abstract class TMDBData {
   final String url = 'https://api.themoviedb.org/3';
-  final String apiUrl =
-      'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0MjVkZDkyZTU1NDQwNTIyODIxYTI4YjE2MjlkNmZhOCIsInN1YiI6IjY0YzJhNzEyZGI0ZWQ2MDBjNzg0ZGRiNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.I1Iy8kHZ00vAOuXeb0mwTjgBeh75Yyk7vxEe1bvOonE';
+  final String apiUrl = '<TMDB Api Key>';
   final String accept = 'application/json';
 
   Future getData(int pageNumber);

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:show_list/features/auth/screens/auth_screen.dart';
 import 'package:show_list/features/main_layout/screens/main_layout.dart';
+import 'package:show_list/features/profile_page/repository/user_information_repository.dart';
 
 class Wrapper extends ConsumerStatefulWidget {
   const Wrapper({super.key});
@@ -14,8 +15,10 @@ class Wrapper extends ConsumerStatefulWidget {
 class _WrapperState extends ConsumerState<Wrapper> {
   @override
   void initState() {
-    FirebaseAuth.instance.authStateChanges().listen((event) {
-      setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      ref.watch(userInformationRepositoryProvider).addListener(
+            () => setState(() {}),
+          );
     });
 
     super.initState();

@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:show_list/features/auth/controller/auth_controller.dart';
 import 'package:show_list/features/auth/widgets/my_text_form_fields.dart';
 import 'package:show_list/features/auth/screens/register_email_password.dart';
+import 'package:show_list/features/profile_page/controller/profile_controller.dart';
 import 'package:show_list/shared/constants.dart';
 import 'package:show_list/shared/widgets/my_elevated_button.dart';
 
@@ -28,6 +30,9 @@ class _EmailAndPasswordSignInState
             password: _controllerForPassword.text.trim(),
             context: context,
           );
+      await ref
+          .read(profileControllerProvider)
+          .getProfileDataFromFirebase(FirebaseAuth.instance.currentUser!.uid);
     }
   }
 

@@ -7,7 +7,6 @@ import 'package:show_list/features/profile_page/repository/user_information_repo
 import 'package:show_list/shared/enums/show_type.dart';
 import 'package:show_list/shared/model/profile_model.dart';
 import 'package:show_list/shared/model/short_mal_data_model.dart';
-import 'package:show_list/shared/model/short_profile_model.dart';
 import 'package:show_list/shared/model/short_tmdb_datamodel.dart';
 
 final profileControllerProvider = Provider((ref) {
@@ -63,10 +62,23 @@ class ProfileController {
         showType: showType, tmdbData: tmdbData, animeData: animeData);
   }
 
-  Future followPerson(ProfileDataModel profileData) async {
-    await userInformationRepository
-        .addFollowing(profileData.toShortProfileData());
+  Future removeFollower(ProfileDataModel profileData) async {
+    await userInformationRepository.deleteFollower(profileData);
+  }
+
+  Future acceptRequest(ProfileDataModel profileData) async {
+    await userInformationRepository.addFollowing(profileData);
     await userInformationRepository.addToFollower(profileData);
+  }
+
+  Future rejectRequest(ProfileDataModel follower) async {
+    await userInformationRepository.rejectRequest(follower);
+  }
+
+  Future followRequest(ProfileDataModel profileData) async {
+    await userInformationRepository
+        .addtoFollowRequestList(profileData.toShortProfileData());
+    await userInformationRepository.addToFollowerRequest(profileData);
   }
 
   Future unfollowPerson(ProfileDataModel profileData) async {
@@ -77,6 +89,10 @@ class ProfileController {
 
   Future getProfileDataFromFirebase(String uid) async {
     return await userInformationRepository.getProfileData(uid);
+  }
+
+  void removeProfile() {
+    userInformationRepository.removeProfile();
   }
 
   ProfileDataModel? getProfileData() {

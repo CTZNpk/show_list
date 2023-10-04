@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:show_list/features/auth/controller/auth_controller.dart';
-import 'package:show_list/features/auth/screens/auth_screen.dart';
+import 'package:show_list/features/auth/screens/user_information_screen.dart';
 import 'package:show_list/features/following_page/screens/following_screen.dart';
 import 'package:show_list/features/home_page/screens/home_screen.dart';
 import 'package:show_list/features/main_layout/controller/main_layout_controller.dart';
@@ -12,6 +12,7 @@ import 'package:show_list/features/my_list/screens/list_screen.dart';
 import 'package:show_list/features/profile_page/controller/profile_controller.dart';
 import 'package:show_list/features/profile_page/screens/profile_screen.dart';
 import 'package:show_list/features/search_page/screens/search_screen.dart';
+import 'package:show_list/shared/loading.dart';
 
 class MainLayout extends ConsumerStatefulWidget {
   static const routeName = '/main-layout';
@@ -25,6 +26,7 @@ class _MainLayoutState extends ConsumerState<MainLayout>
     with TickerProviderStateMixin {
   int selectedPosition = 0;
   late CircularBottomNavigationController tabBarController;
+  bool loading = true;
 
   void updateBodyWithSetState(int selectedPos) {
     setState(() {
@@ -37,53 +39,78 @@ class _MainLayoutState extends ConsumerState<MainLayout>
     setState(() {});
   }
 
+  void editProfile() async {
+    await Navigator.pushNamed(context, UserInformationScreen.routeName);
+    setState(() {});
+  }
+
+  void gettingData() async {
+    await ref.read(mainLayoutControllerProvider).requestDataFromLocalSql();
+    await ref
+        .read(profileControllerProvider)
+        .getProfileDataFromFirebase(FirebaseAuth.instance.currentUser!.uid);
+    setState(() {
+      loading = false;
+    });
+  }
+
   @override
   void initState() {
     tabBarController = CircularBottomNavigationController(selectedPosition);
-    ref.read(mainLayoutControllerProvider).requestDataFromLocalSql();
-    ref
-        .read(profileControllerProvider)
-        .getProfileDataFromFirebase(FirebaseAuth.instance.currentUser!.uid);
+    gettingData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final myTheme = Theme.of(context);
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(
-            Icons.person_2,
-          ), //TODO Change this with the profile pic of the user
-          onPressed: () {},
-        ),
-        actions: [
-          PopupMenuButton(
-            icon: const Icon(
-              Icons.more_vert,
-            ),
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                onTap: signOut,
-                child: Text(
-                  'Sign Out',
-                  style: myTheme.textTheme.displayMedium,
+    return loading
+        ? const LoadingScreen()
+        : Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.person_2,
                 ),
-              )
-            ],
-          ),
-        ],
-      ),
-      body: _BodyDisplay(
-        selectedPosition: selectedPosition,
-      ),
-      bottomNavigationBar: _BottomBarDisplay(
-        updateSelectedPositonWithSetState: updateBodyWithSetState,
-        navController: tabBarController,
-      ),
-    );
+                onPressed: () {
+                  selectedPosition = 4;
+                  tabBarController.value = 4;
+                  setState(() {});
+                },
+              ),
+              actions: [
+                PopupMenuButton(
+                  icon: const Icon(
+                    Icons.more_vert,
+                  ),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      onTap: editProfile,
+                      child: Text(
+                        'Edit Profile',
+                        style: myTheme.textTheme.displayMedium,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      onTap: signOut,
+                      child: Text(
+                        'Sign Out',
+                        style: myTheme.textTheme.displayMedium,
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+            body: _BodyDisplay(
+              selectedPosition: selectedPosition,
+            ),
+            bottomNavigationBar: _BottomBarDisplay(
+              updateSelectedPositonWithSetState: updateBodyWithSetState,
+              navController: tabBarController,
+            ),
+          );
   }
 
   @override
@@ -94,7 +121,7 @@ class _MainLayoutState extends ConsumerState<MainLayout>
 }
 
 class _BodyDisplay extends StatelessWidget {
-  _BodyDisplay({required this.selectedPosition});
+  const _BodyDisplay({required this.selectedPosition});
 
   final int selectedPosition;
 
@@ -108,15 +135,11 @@ class _BodyDisplay extends StatelessWidget {
       case 2:
         return const ListScreen();
       case 3:
-        return FirebaseAuth.instance.currentUser == null
-            ? const AuthScreen()
-            : const FollowingScreen();
+        return const FollowingScreen();
       default:
-        return FirebaseAuth.instance.currentUser == null
-            ? const AuthScreen() //TODO Auth Screen does not automatically change when we sign in
-            : ProfileScreen(
-                uid: FirebaseAuth.instance.currentUser!.uid,
-              );
+        return ProfileScreen(
+          uid: FirebaseAuth.instance.currentUser!.uid,
+        );
     }
   }
 }

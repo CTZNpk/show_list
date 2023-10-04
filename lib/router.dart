@@ -4,6 +4,7 @@ import 'package:show_list/features/auth/screens/email_password_sign_in.dart';
 import 'package:show_list/features/auth/screens/register_email_password.dart';
 import 'package:show_list/features/auth/screens/user_information_screen.dart';
 import 'package:show_list/features/main_layout/screens/main_layout.dart';
+import 'package:show_list/features/profile_page/screens/display_people.dart';
 import 'package:show_list/features/profile_page/screens/profile_screen.dart';
 import 'package:show_list/features/search_page/widgets/display_filters.dart';
 import 'package:show_list/features/search_page/widgets/display_search_results.dart';
@@ -36,6 +37,17 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case UserInformationScreen.routeName:
       return MaterialPageRoute(
         builder: (context) => const UserInformationScreen(),
+      );
+
+    case DisplayPeople.routeName:
+      List<dynamic> args = settings.arguments as List<dynamic>;
+
+      return MaterialPageRoute(
+        builder: (context) => DisplayPeople(
+          people: args[0],
+          title: args[1],
+          listType: args[2],
+        ),
       );
 
     case ProfileScreen.routeName:

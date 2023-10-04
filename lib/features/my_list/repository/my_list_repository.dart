@@ -31,8 +31,8 @@ class MyListRepository {
   final ProviderRef ref;
 
   Future storeToWatch({
-    MalAnimeDataModel? animeData,
-    TMDBDataModel? movieShowData,
+    ShortMalData? animeData,
+    ShortTMDBDataModel? movieShowData,
   }) async {
     if (animeData == null && movieShowData == null) {
       debugPrint(
@@ -47,8 +47,8 @@ class MyListRepository {
             .collection('users')
             .doc(auth.currentUser!.uid)
             .collection('anime')
-            .doc(animeData.malId)
-            .set(animeData.toShortMalData().toMap());
+            .doc(animeData.malID)
+            .set(animeData.toMap());
 
         await firestore
             .collection('users')
@@ -57,16 +57,19 @@ class MyListRepository {
             .doc(followerUid)
             .set(
           {
-            'info': animeData.planType != PlanType.finished
-                ? '${ref.read(profileControllerProvider).getProfileData()!.userName} added ${animeData.title} to ${animeData.planType!.type} on ${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}'
-                : '${ref.read(profileControllerProvider).getProfileData()!.userName} added ${animeData.title} to ${animeData.planType!.type} on ${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year} with rating ${animeData.userRating}',
+            'userName':
+                ref.read(profileControllerProvider).getProfileData()!.userName,
+            'planType': animeData.planType!.name,
+            'title': animeData.title,
+            'userRating': animeData.userRating,
             'time': animeData.watchedTime!.millisecondsSinceEpoch,
           },
         );
         if (animeData.planType == PlanType.finished &&
             animeData.userRating! >= 9) {
-          ref.read(profileControllerProvider).addToTopList(
-              showType: ShowType.anime, animeData: animeData.toShortMalData());
+          ref
+              .read(profileControllerProvider)
+              .addToTopList(showType: ShowType.anime, animeData: animeData);
         }
       } else {
         movieShowData!.watchedTime = DateTime.now();
@@ -75,7 +78,7 @@ class MyListRepository {
             .doc(auth.currentUser!.uid)
             .collection(movieShowData.showType.name)
             .doc(movieShowData.tmdbID)
-            .set(movieShowData.toShortTMDBDataModel().toMap());
+            .set(movieShowData.toMap());
         await firestore
             .collection('users')
             .doc(auth.currentUser!.uid)
@@ -83,9 +86,11 @@ class MyListRepository {
             .doc(followerUid)
             .set(
           {
-            'info': movieShowData.planType != PlanType.finished
-                ? '${ref.read(profileControllerProvider).getProfileData()!.userName} added ${movieShowData.title} to ${movieShowData.planType!.type} on ${movieShowData.watchedTime!.day}-${movieShowData.watchedTime!.month}-${movieShowData.watchedTime!.year}'
-                : '${ref.read(profileControllerProvider).getProfileData()!.userName} added ${movieShowData.title} to ${movieShowData.planType!.type} on ${movieShowData.watchedTime!.day}-${movieShowData.watchedTime!.month}-${movieShowData.watchedTime!.year} with rating ${movieShowData.userRating}',
+            'userName':
+                ref.read(profileControllerProvider).getProfileData()!.userName,
+            'planType': movieShowData.planType!.name,
+            'title': movieShowData.title,
+            'userRating': movieShowData.userRating,
             'time': movieShowData.watchedTime!.millisecondsSinceEpoch,
           },
         );
@@ -93,7 +98,7 @@ class MyListRepository {
             movieShowData.userRating! >= 9) {
           await ref.read(profileControllerProvider).addToTopList(
                 showType: movieShowData.showType,
-                tmdbData: movieShowData.toShortTMDBDataModel(),
+                tmdbData: movieShowData,
               );
         }
       }

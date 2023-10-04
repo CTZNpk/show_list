@@ -2,6 +2,7 @@ import 'package:riverpod/riverpod.dart';
 import 'package:show_list/shared/model/following_string_model.dart';
 import 'package:show_list/shared/model/short_mal_data_model.dart';
 import 'package:show_list/shared/model/short_tmdb_datamodel.dart';
+import 'package:show_list/shared/sql_service/delete_sql.dart';
 import 'package:show_list/shared/sql_service/initialize_delete_sql.dart';
 import 'package:show_list/shared/sql_service/insert_sql.dart';
 import 'package:show_list/shared/sql_service/read_sql.dart';
@@ -9,9 +10,11 @@ import 'package:show_list/shared/sql_service/read_sql.dart';
 final sqlHelperProvider = Provider(
   (ref) {
     return SQLHelper(
-        initAndDelSql: InitializeAndDeleteSql(),
-        insertSql: InsertSql(),
-        readSql: ReadSql());
+      initAndDelSql: InitializeAndDeleteSql(),
+      insertSql: InsertSql(),
+      readSql: ReadSql(),
+      deleteSql: DeleteSql(),
+    );
   },
 );
 
@@ -20,10 +23,12 @@ class SQLHelper {
     required this.initAndDelSql,
     required this.insertSql,
     required this.readSql,
+    required this.deleteSql,
   });
   InitializeAndDeleteSql initAndDelSql;
   InsertSql insertSql;
   ReadSql readSql;
+  DeleteSql deleteSql;
 
   Future createLocalTables() async {
     await initAndDelSql.createNewTables();
@@ -42,6 +47,10 @@ class SQLHelper {
   Future insertIntoLocalFollowingData(
       FollowingStringModel followingData) async {
     await insertSql.createFollowingData(followingData);
+  }
+
+  Future deleteFollowingDataBeforeTime(DateTime time) async {
+    await deleteSql.deleteFollowingDataBeforeTime(time);
   }
 
   Future<List<FollowingStringModel>> readLocalFollowingData() async {

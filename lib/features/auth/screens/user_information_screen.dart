@@ -52,6 +52,7 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
         [],
       );
 
+
       if (context.mounted) {
         while (Navigator.canPop(context)) {
           Navigator.pop(context);
@@ -90,6 +91,7 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
                       padding: const EdgeInsets.all(20),
                       child: TextField(
                         controller: nameController,
+                        maxLength: 25,
                         style: TextStyle(
                           color: myTheme.colorScheme.onSurface,
                         ),
@@ -160,7 +162,7 @@ class _ShowImageOrDefault extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return image == null
-        ? const _DefaultAvatar()
+        ?  const _DefaultAvatar()
         : _AvatarFromImage(image: image);
   }
 }
